@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "esnext",
+    "jsx": "react-jsx",
+    "lib": [
+      "ES2015",
+      "DOM"
+    ],
+    "declaration": true,
+    "outDir": "./out",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "composite": true,
+    "tsBuildInfoFile": "./out/.tsbuildinfo"
+  },
+  "include": [
+    "dawa-autocomplete-react.config.json",
+    "test"
+  ],
+  "references": [
+    {
+      "path": "./src"
+    }
+  ]
+}

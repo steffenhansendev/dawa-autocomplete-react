@@ -1,0 +1,35 @@
+{
+  "name": "dawa-autocomplete-react",
+  "version": "1.0.19",
+  "description": "React first TSX component and API client for Danmarks Adresse Web API (DAWA) autocomplete.",
+  "main": "out/src/index.js",
+  "module": "out/src/index.js",
+  "types": "out/src/index.d.ts",
+  "author": "Steffen Hansen",
+  "license": "AGPL-3.0",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "rm -r out || : && mkdir -p out/src && eslint && tsc --build && rm out/.tsbuildinfo*",
+    "demo": "npm run build && rm -r out/test/demo || : && mkdir -p out/test/demo && cp test/demo/index.html out/test/demo",
+    "bundleDemo": "npm run demo && esbuild --bundle --sourcemap test/demo/index.tsx --outfile=out/test/demo/index.js",
+    "watchDemo": "npm run demo && esbuild --bundle --sourcemap test/demo/index.tsx --outfile=out/test/demo/index.js --watch"
+  },
+  "files": [
+    "out/src", "out/dawa-autocomplete-react.config.json"
+  ],
+  "peerDependencies": {
+    "bootstrap": "^5.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@types/react": "^18.0.0 || ^19.0.0",
+    "@types/react-dom": "^18.0.0 || ^19.0.0",
+    "bootstrap": "^5.0.0",
+    "esbuild": "^0.25.2",
+    "eslint": "^9.25.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.30.1"
+  }
+}

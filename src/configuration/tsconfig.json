@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "../../out/src/configuration",
+    "tsBuildInfoFile": "../../out/.tsbuildinfo.configuration",
+  },
+  "include": [
+    "**/*"
+  ],
+  "references": [
+    {
+      "path": "../shared"
+    }
+  ]
+}

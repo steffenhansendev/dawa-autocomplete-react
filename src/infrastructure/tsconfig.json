@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "../../out/src/infrastructure",
+    "tsBuildInfoFile": "../../out/.tsbuildinfo.infrasturcture"
+  },
+  "include": [
+    "**/*"
+  ],
+  "references": [
+    {
+      "path": "../shared"
+    },
+    {
+      "path": "../configuration"
+    },
+    {
+      "path": "../core"
+    }
+  ]
+}

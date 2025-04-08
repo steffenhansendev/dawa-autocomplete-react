@@ -1,0 +1,26 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "../out/src",
+    "tsBuildInfoFile": "../out/.tsbuildinfo.src"
+  },
+  "include": [
+    "index.ts",
+    "DawaAutocompleteAddressInput.tsx"
+  ],
+  "references": [
+    {
+      "path": "./configuration"
+    },
+    {
+      "path": "./shared"
+    },
+    {
+      "path": "./infrastructure"
+    },
+    {
+      "path": "./core"
+    }
+  ]
+}

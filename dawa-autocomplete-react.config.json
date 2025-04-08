@@ -1,0 +1,55 @@
+{
+  "placeholder": "Enter Danish address ...",
+  "isAutofocus": false,
+  "errorMessageOnApiClientFailure": "Integration with external address registry failed.",
+  "loadingMessageOnApiClientRequest": "Loading",
+  "loadingMessageOnApiClientRequestPendMilliseconds": 150,
+  "valueChangedDebounceMilliseconds": 250,
+  "apiRequestDebounceMilliseconds": 0,
+  "autocompleteAddressApiHost": "https://api.dataforsyningen.dk",
+  "autocompleteAddressApiUri": "autocomplete",
+  "autocompleteAddressApiMaxResultCount": 10,
+  "divElementClassNames": [
+    "autocomplete-input-container"
+  ],
+  "bootstrapDivElementClassNames": [
+    "dropdown"
+  ],
+  "inputElementClassNames": [
+    "autocomplete-input"
+  ],
+  "bootstrapInputElementClassNames": [
+    "form-control"
+  ],
+  "inputElementValidClassNames": [
+    "autocomplete-input-valid"
+  ],
+  "bootstrapInputElementValidClassNames": [
+    "is-valid"
+  ],
+  "ulElementClassNames": [
+    "autocomplete-input-option-list"
+  ],
+  "bootstrapUlElementClassNames": [
+    "dropdown-menu"
+  ],
+  "liElementsClassNames": [
+    "autocomplete-input-option"
+  ],
+  "bootstrapLiElementsClassNames": [
+    "dropdown-item"
+  ],
+  "liElementsActiveClassNames": [
+    "autocomplete-input-option-active"
+  ],
+  "bootstrapLiElementsActiveClassNames": [
+    "active"
+  ],
+  "liElementsMouseOverClassNames": [
+    "autocomplete-input-option-mouse-over"
+  ],
+  "bootstrapLiElementsMouseOverClassNames": [
+    "bg-dark-subtle"
+  ],
+  "ariaLabel": "Search input"
+}
