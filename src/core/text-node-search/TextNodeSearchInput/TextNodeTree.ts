@@ -10,7 +10,9 @@ export interface TextNodeTree {
 
     goToNode(index: number): Promise<void>;
 
-    resetOptions(): Promise<void>;
+    resetOptionsToCurrentNodeChildren(): Promise<void>;
 
     readonly errorMessage: string | null;
+
+    retry(value: string, caretIndexInValue: number): Promise<void>;
 }

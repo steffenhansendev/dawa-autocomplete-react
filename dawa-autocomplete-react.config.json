@@ -3,12 +3,11 @@
   "isAutofocus": false,
   "errorMessageOnApiClientFailure": "Integration with external address registry failed.",
   "loadingMessageOnApiClientRequest": "Loading",
-  "loadingMessageOnApiClientRequestPendMilliseconds": 150,
-  "valueChangedDebounceMilliseconds": 250,
-  "apiRequestDebounceMilliseconds": 0,
+  "apiRequestLoadingIndicatorDebounceMilliseconds": 150,
+  "apiRequestTypingDebounceMilliseconds": 150,
   "autocompleteAddressApiHost": "https://api.dataforsyningen.dk",
   "autocompleteAddressApiUri": "autocomplete",
-  "autocompleteAddressApiMaxResultCount": 10,
+  "autocompleteAddressApiMaxResultCount": 15,
   "divElementClassNames": [
     "autocomplete-input-container"
   ],

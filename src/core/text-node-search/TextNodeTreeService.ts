@@ -1,9 +1,8 @@
 import {Result} from "../../shared/Result";
 import {ResultingCaretTextQueryNode} from "./types";
-import {Address} from "../address/Address";
 
 export interface TextNodeTreeService<T> {
-    getNodesByCaretText(value: string, caretIndexInValue: number): Promise<Result<ResultingCaretTextQueryNode<T>[], Error>>;
+    getNodesByCaretText(value: string, caretIndexInValue: number, abortController?: AbortController): Promise<Result<ResultingCaretTextQueryNode<T>[]>>;
 
-    getNodesByNode(node: ResultingCaretTextQueryNode<Address>): Promise<Result<ResultingCaretTextQueryNode<Address>[], Error>>;
+    getNodesByNode(node: ResultingCaretTextQueryNode<T>): Promise<Result<ResultingCaretTextQueryNode<T>[]>>;
 }

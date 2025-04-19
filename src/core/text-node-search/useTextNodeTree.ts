@@ -1,8 +1,8 @@
-import {useEffect, useRef, useState} from "react";
+import {MutableRefObject, useEffect, useRef, useState} from "react";
 import {TextNodeTreeService} from "./TextNodeTreeService";
 import {TextNodeTree} from "./TextNodeSearchInput/TextNodeTree";
 import {ResultingCaretTextQuery, ResultingCaretTextQueryNode} from "./types";
-import {map, Result} from "../../shared/Result";
+import {Cancellation, map, Result} from "../../shared/Result";
 import {TreeNode} from "../../shared/TreeNode";
 import {configuration} from "../../configuration/configure";
 
@@ -14,7 +14,7 @@ export function useTextNodeTree<T>(service: TextNodeTreeService<T>, destinationR
     const [destinationResult, setDestinationResult] = useState<T | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isSettingOptions, setIsSettingOptions] = useState<boolean>(false);
-    const setResultIdRef = useRef<number>(-1);
+    const setResultIdRef: MutableRefObject<number> = useRef<number>(-1);
 
     useEffect((): void => {
         destinationResultObserver(destinationResult);
@@ -25,7 +25,7 @@ export function useTextNodeTree<T>(service: TextNodeTreeService<T>, destinationR
             _reset();
             return;
         }
-        const promise: Promise<Result<ResultingCaretTextQueryNode<T>[], Error>> = service.getNodesByCaretText(value, caretIndexInValue);
+        const promise: Promise<Result<ResultingCaretTextQueryNode<T>[]>> = service.getNodesByCaretText(value, caretIndexInValue);
         await _setResult(promise);
     }
 
@@ -36,15 +36,28 @@ export function useTextNodeTree<T>(service: TextNodeTreeService<T>, destinationR
         }
         setCurrentNode(node);
         setDestinationResult(node.result);
-        const promise: Promise<Result<ResultingCaretTextQueryNode<T>[], Error>> = node.getChildren();
+        const promise: Promise<Result<ResultingCaretTextQueryNode<T>[]>> = node.getChildren();
         await _setResult(promise);
     }
 
-    async function resetOptions(): Promise<void> {
+    async function retry(value: string, caretIndexInValue: number): Promise<void> {
+        if (destinationResult) {
+            return;
+        }
+        let promise: Promise<Result<ResultingCaretTextQueryNode<T>[]>> | null = null;
+        if (currentNode) {
+            promise = currentNode.getChildren();
+        } else {
+            promise = service.getNodesByCaretText(value, caretIndexInValue);
+        }
+        await _setResult(promise);
+    }
+
+    async function resetOptionsToCurrentNodeChildren(): Promise<void> {
         if (!currentNode) {
             return;
         }
-        const result: Promise<Result<ResultingCaretTextQueryNode<T>[], Error>> = currentNode.getChildren();
+        const result: Promise<Result<ResultingCaretTextQueryNode<T>[]>> = currentNode.getChildren();
         await _setResult(result);
     }
 
@@ -55,20 +68,21 @@ export function useTextNodeTree<T>(service: TextNodeTreeService<T>, destinationR
         isDestinationFound: !!destinationResult,
         searchForNodes,
         goToNode,
-        resetOptions,
-        errorMessage
+        resetOptionsToCurrentNodeChildren,
+        errorMessage,
+        retry
     }
 
-    async function _setResult(resultPromise: Promise<Result<TreeNode<ResultingCaretTextQuery<T>>[], Error>>): Promise<void> {
-        clearTimeout(setResultIdRef.current);
-        setIsSettingOptions(false);
+    async function _setResult(resultPromise: Promise<Result<TreeNode<ResultingCaretTextQuery<T>>[]>>): Promise<void> {
         setResultIdRef.current = setTimeout((): void => {
             setIsSettingOptions(true);
-        }, configuration.loadingMessageOnApiClientRequestPendMilliseconds);
-        const result: Result<TreeNode<ResultingCaretTextQueryNode<T>>[], Error> = await resultPromise;
+        }, configuration.apiRequestLoadingIndicatorDebounceMilliseconds);
+        const result: Result<TreeNode<ResultingCaretTextQueryNode<T>>[]> = await resultPromise;
         map(result,
             (s: TreeNode<ResultingCaretTextQueryNode<T>>[]): void => {
                 setOptions(s);
+                clearTimeout(setResultIdRef.current);
+                setIsSettingOptions(false);
             },
             (f: Error): void => {
                 console.error(f);
@@ -76,9 +90,13 @@ export function useTextNodeTree<T>(service: TextNodeTreeService<T>, destinationR
                 setTimeout((): void => {
                     setErrorMessage(null);
                 }, ERROR_TIMEOUT_SECONDS * 1000);
-            });
-        clearTimeout(setResultIdRef.current);
-        setIsSettingOptions(false);
+                clearTimeout(setResultIdRef.current);
+                setIsSettingOptions(false);
+            },
+            (c: Cancellation): void => {
+                console.debug(c.reason);
+            }
+        );
     }
 
     function _reset(): void {

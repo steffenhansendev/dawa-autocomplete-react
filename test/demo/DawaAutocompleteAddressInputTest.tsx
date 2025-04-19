@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, {ReactElement, useState} from "react";
 import {Address, DawaAutocompleteAddressInput} from "../../src";
 
-function DawaAutocompleteAddressInputDemo(): React.ReactElement {
+function DawaAutocompleteAddressInputDemo(): ReactElement {
     const [address, setAddress] = useState<Address | null>();
     return <>
         <div>

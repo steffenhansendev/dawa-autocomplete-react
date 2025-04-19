@@ -13,7 +13,7 @@ import {AddressType} from "../core/address/AddressType";
 
 export function mapResDtoToNode(
     resDto: AutocompleteAddressResponseDto,
-    getNodesByNode: (node: ResultingCaretTextQueryNode<Address>) => Promise<Result<ResultingCaretTextQueryNode<Address>[], Error>>
+    getNodesByNode: (node: ResultingCaretTextQueryNode<Address>) => Promise<Result<ResultingCaretTextQueryNode<Address>[]>>
 ): ResultingCaretTextQueryNode<Address> {
     const isLeaf: boolean = resDto.type === "adresse";
     const isRoot: boolean = resDto.type === "vejnavn";

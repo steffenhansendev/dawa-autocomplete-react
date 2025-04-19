@@ -9,10 +9,9 @@ export function configure(override: DeepPartial<Configuration> | undefined): voi
         placeholder: override?.placeholder ?? configFile.placeholder,
         isAutoFocus: override?.isAutoFocus ?? configFile.isAutofocus,
         errorMessageOnApiClientFailure: override?.errorMessageOnApiClientFailure ?? configFile.errorMessageOnApiClientFailure,
-        valueChangedDebounceMilliseconds: override?.valueChangedDebounceMilliseconds ?? configFile.valueChangedDebounceMilliseconds,
-        apiRequestDebounceMilliseconds: configFile.apiRequestDebounceMilliseconds,
         loadingMessageOnApiClientRequest: override?.loadingMessageOnApiClientRequest ?? configFile.loadingMessageOnApiClientRequest,
-        loadingMessageOnApiClientRequestPendMilliseconds: override?.loadingMessageOnApiClientRequestPendMilliseconds ?? configFile.loadingMessageOnApiClientRequestPendMilliseconds,
+        apiRequestTypingDebounceMilliseconds: configFile.apiRequestTypingDebounceMilliseconds,
+        apiRequestLoadingIndicatorDebounceMilliseconds: override?.apiRequestLoadingIndicatorDebounceMilliseconds ?? configFile.apiRequestLoadingIndicatorDebounceMilliseconds,
         autocompleteAddressApiClient: {
             host: override?.autocompleteAddressApiClient?.host ?? configFile.autocompleteAddressApiHost,
             uri: override?.autocompleteAddressApiClient?.uri ?? configFile.autocompleteAddressApiUri,

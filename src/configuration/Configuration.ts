@@ -3,9 +3,8 @@ export interface Configuration {
     readonly isAutoFocus: boolean;
     readonly errorMessageOnApiClientFailure: string;
     readonly loadingMessageOnApiClientRequest: string;
-    readonly loadingMessageOnApiClientRequestPendMilliseconds: number;
-    readonly valueChangedDebounceMilliseconds: number;
-    readonly apiRequestDebounceMilliseconds: number;
+    readonly apiRequestLoadingIndicatorDebounceMilliseconds: number;
+    readonly apiRequestTypingDebounceMilliseconds: number;
     readonly autocompleteAddressApiClient: {
         readonly host: string;
         readonly uri: string;

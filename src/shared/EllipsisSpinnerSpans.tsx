@@ -1,11 +1,11 @@
-import React, {JSX, useEffect, useState} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 
 interface Props {
     dotCount: number;
     intervalInMilliseconds: number
 }
 
-function EllipsisSpinnerSpans({dotCount = 3, intervalInMilliseconds = 250}: Props): JSX.Element {
+function EllipsisSpinnerSpans({dotCount = 3, intervalInMilliseconds = 250}: Props): ReactElement {
     const [visibleDotIndex, setVisibleDotIndex] = useState<number>(0);
 
     useEffect((): () => void => {
@@ -21,7 +21,7 @@ function EllipsisSpinnerSpans({dotCount = 3, intervalInMilliseconds = 250}: Prop
             role={"status"}
             aria-label={"Loading"}
         >
-            {Array.from({length: dotCount}).map((_, i: number): React.ReactElement => {
+            {Array.from({length: dotCount}).map((_, i: number): ReactElement => {
                 return <span
                     key={i}
                     style={i === visibleDotIndex ? {visibility: "visible"} : {visibility: "hidden"}}

@@ -4,5 +4,5 @@ import {AutocompleteAddressRequestDto} from "./dataforsyningen/AutocompleteAddre
 import {Result} from "../shared/Result";
 
 export interface AutocompleteAddressApiClient {
-    readAutocompleteAddresses(requestDto: AutocompleteAddressRequestDto, abortController?: AbortController): Promise<Result<AutocompleteAddressResponseDto[], Error>>
+    readAutocompleteAddresses(requestDto: AutocompleteAddressRequestDto, abortController?: AbortController): Promise<Result<AutocompleteAddressResponseDto[]>>
 }

@@ -1,10 +1,13 @@
-import React, {JSX, useEffect, useLayoutEffect, useRef, useState} from "react";
+import React, {MutableRefObject, ReactElement, useEffect, useRef, useState} from "react";
 import TextNodeSearchInputDropdown from "./TextNodeSearchInputDropdown";
 import {TextNodeTree} from "./TextNodeTree";
 import {CaretTextQueryNode} from "../types";
 import {configuration} from "../../../configuration/configure";
 import {CaretTextQuery} from "../CaretTextQuery";
-import useInputElementValue from "./useInputElementValue";
+import useInputElementValue, {InputElementValue} from "./useInputElementValue";
+import useKeyboardNavigation, {KeyboardNavigation} from "./useKeyboardNavigation";
+
+const RE_BLUR_ON_FOCUS_THRESHOLD_MILLiSECONDS: number = 100;
 
 interface Props {
     placeholder: string;
@@ -16,39 +19,50 @@ function TextNodeSearchInput({
                                  placeholder,
                                  isAutoFocus,
                                  textNodeTree: {
-                                     options,
                                      currentNode,
-                                     isSettingOptions,
-                                     isDestinationFound,
-                                     searchForNodes,
+                                     errorMessage,
                                      goToNode,
-                                     resetOptions,
-                                     errorMessage
+                                     isDestinationFound,
+                                     isSettingOptions,
+                                     options,
+                                     resetOptionsToCurrentNodeChildren,
+                                     retry,
+                                     searchForNodes
                                  }
-                             }: Props): JSX.Element {
-    const inputElementRef = useRef<HTMLInputElement>(null);
-    const [isInputElementInFocus, setIsInputElementInFocus] = useState<boolean>(false);
-    const [activeLiElementIndex, setActiveLiElementIndex] = useState(0);
-    const isDelete = useRef<boolean>(false);
-    const valueChangedIdRef = useRef<number>(-1);
-    const isBlurredWithErrorRef = useRef<boolean>(false);
-    const {inputElementValue, setInputByCaretText, setInputByValue} = useInputElementValue(inputElementRef);
+                             }: Props): ReactElement {
+    const inputElementRef: MutableRefObject<HTMLInputElement | null> = useRef<HTMLInputElement>(null);
+    const isDelete: MutableRefObject<boolean> = useRef<boolean>(false);
+    const isBlurredWithErrorRef: MutableRefObject<boolean> = useRef<boolean>(false);
+    const blurTimestampRef: MutableRefObject<number> = useRef<number>(-1);
+    const [isInFocusTracker, setIsInFocusTracker] = useState<boolean>(false);
+    const {
+        inputElementValue,
+        setInputByNode,
+        setInputByValue,
+    }: InputElementValue = useInputElementValue(inputElementRef);
+    const keyboardNavigation: KeyboardNavigation = useKeyboardNavigation(options.length, goToNode, (index: number) => {
+        setInputByNode({node: options[index], isKeyboardNavigation: true});
+    });
 
-    useLayoutEffect((): void => {
-        if (!currentNode) {
-            return;
+    useEffect((): void => {
+        keyboardNavigation.stop();
+        setInputByNode({node: currentNode});
+        if (currentNode?.isLeaf) {
+            inputElementRef.current?.blur();
         }
-        if (isInputElementInFocus && !currentNode.isLeaf) {
-            setInputByCaretText(currentNode?.query);
-            return;
+    }, [currentNode]);
+
+    useEffect(() => {
+        if (!keyboardNavigation.isNavigating) {
+            setInputByNode({node: currentNode});
         }
-        setInputByCaretText(currentNode.presentable);
-    }, [currentNode, isInputElementInFocus]);
+    }, [keyboardNavigation.isNavigating]);
 
     useEffect((): void => {
         (async (): Promise<void> => {
-            if (options.length === 1 && !isDelete.current) {
-                await handleChoice(0);
+            const isAutomaticChoice: boolean = options.length === 1 && options[0].isLeaf && !isDelete.current;
+            if (isAutomaticChoice) {
+                await goToNode(0);
             }
             isDelete.current = false;
         })();
@@ -56,133 +70,91 @@ function TextNodeSearchInput({
 
     const handleValueChanged = async (value: string, caretIndexInValue: number): Promise<void> => {
         isDelete.current = value.length < inputElementValue.length;
-        unsetActiveLiElementIndex();
-        setInputByValue(value, caretIndexInValue);
-        clearTimeout(valueChangedIdRef.current);
-        valueChangedIdRef.current = setTimeout(async (): Promise<void> => {
-            const indexOfMatch: number = options.findIndex((n: CaretTextQueryNode): boolean => n.isMatch(value));
-            if (options[indexOfMatch]?.isLeaf) {
-                await handleChoice(indexOfMatch);
-                return;
-            }
-            await searchForNodes(value, caretIndexInValue);
-        }, configuration.valueChangedDebounceMilliseconds);
+        keyboardNavigation.stop();
+        const match: CaretTextQueryNode | undefined = options.find((n: CaretTextQueryNode): boolean => n.isMatch(value));
+        if (match && !isDelete.current) {
+            // Case correction
+            setInputByNode({node: match});
+        } else {
+            setInputByValue(value, caretIndexInValue);
+        }
+        await searchForNodes(value, caretIndexInValue);
     };
 
-    const handleChoice = async (choiceIndex: number): Promise<void> => {
-        unsetActiveLiElementIndex();
-        const choice: CaretTextQueryNode = options[choiceIndex];
-        await goToNode(choiceIndex);
-        setInputByCaretText(choice.query);
-        if (choice.isLeaf) {
+    async function handleInputFocus(): Promise<void> {
+        const blurTimestampDelta: number = Date.now() - blurTimestampRef.current;
+        if (blurTimestampDelta < RE_BLUR_ON_FOCUS_THRESHOLD_MILLiSECONDS) {
+            // Rejecting Mobile autofocus after blur
             inputElementRef.current?.blur();
+            return;
         }
-    };
-
-    const handleInputBlur = async (): Promise<void> => {
-        setIsInputElementInFocus(false);
-        if (errorMessage) {
-            isBlurredWithErrorRef.current = true;
-        }
-        await resetOptions();
-    };
-
-    const handleInputFocus = async (): Promise<void> => {
-        setIsInputElementInFocus(true);
+        setIsInFocusTracker(true);
         if (isBlurredWithErrorRef.current) {
             isBlurredWithErrorRef.current = false;
             if (isDestinationFound) {
                 return;
             }
-            if (currentNode) {
-                await handleValueChanged(currentNode.query.value, currentNode.query.caretIndex);
-                return;
-            }
-            await handleValueChanged(inputElementValue, inputElementValue.length);
+            await retry(inputElementValue, inputElementRef.current?.selectionStart ?? inputElementValue.length);
+        }
+        if (keyboardNavigation.isNavigating) {
+            setInputByNode({node: options[keyboardNavigation.optionsIndex], isKeyboardNavigation: true});
             return;
         }
-    };
-
-    const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>): Promise<void> => {
-        switch (e.key) {
-            case "ArrowDown": {
-                e.preventDefault(); // Fixates caret
-                const length: number = options.length;
-                if (activeLiElementIndex < length - 1) {
-                    const nextActiveLiElementIndex: number = activeLiElementIndex + 1;
-                    setActiveLiElementIndex(nextActiveLiElementIndex);
-                    const option: CaretTextQueryNode = options[nextActiveLiElementIndex];
-                    setInputByCaretText(option.presentable);
-                }
-                break;
-            }
-            case "ArrowUp": {
-                e.preventDefault(); // Fixates caret
-                if (activeLiElementIndex > -1) {
-                    const nextActiveLiElementIndex: number = activeLiElementIndex - 1;
-                    setActiveLiElementIndex(nextActiveLiElementIndex);
-                    if (nextActiveLiElementIndex === -1) {
-                        if (!currentNode) {
-                            return
-                        }
-                        setInputByCaretText(currentNode.query)
-                    }
-                    const option: CaretTextQueryNode = options[nextActiveLiElementIndex];
-                    setInputByCaretText(option.presentable);
-                }
-                break;
-            }
-            case "Enter":
-            case "Tab": {
-                await handleChoice(activeLiElementIndex);
-            }
-        }
-    };
-
-    const unsetActiveLiElementIndex = (): void => {
-        setActiveLiElementIndex(-1);
+        setInputByNode({node: currentNode});
+        await resetOptionsToCurrentNodeChildren();
     }
 
-    const isDroppedDown: boolean = (isInputElementInFocus && options.length > 0) || isSettingOptions;
-    const styling = configuration.styling.textNodeSearchInput;
+    async function handleInputBlur(): Promise<void> {
+        setIsInFocusTracker(false);
+        blurTimestampRef.current = Date.now();
+        if (errorMessage) {
+            isBlurredWithErrorRef.current = true;
+        }
+        setInputByNode({node: currentNode});
+    }
+
+    const isDroppedDown: boolean = !errorMessage && (isSettingOptions || isInFocusTracker && options.length > 0);
+
+    const STYLING = configuration.styling.textNodeSearchInput;
 
     const getInputElementClassNames = (): string => {
-        let inputElementClassNames: string[] = styling.inputElementClassNames;
+        let inputElementClassNames: string[] = STYLING.inputElementClassNames;
         if (isDestinationFound) {
-            inputElementClassNames = inputElementClassNames.concat(styling.inputElementValidClassNames);
+            inputElementClassNames = inputElementClassNames.concat(STYLING.inputElementValidClassNames);
         }
         return inputElementClassNames.join(" ");
     };
 
     return (
-        <div className={styling.divElementClassNames.join(" ")} aria-live={"polite"} role={"listbox"}>
+        <div className={STYLING.divElementClassNames.join(" ")} aria-live={"polite"} role={"listbox"}>
             <input
                 ref={inputElementRef}
                 autoFocus={isAutoFocus}
+                autoCorrect={"off"}
+                autoCapitalize={"off"}
+                spellCheck={false}
                 type="text"
                 className={getInputElementClassNames()}
                 value={errorMessage ?? inputElementValue}
                 placeholder={placeholder}
                 onKeyDown={async (e: React.KeyboardEvent<HTMLInputElement>): Promise<void> => {
-                    await handleKeyDown(e);
+                    await keyboardNavigation.handleKeyDown(e);
                 }}
                 onChange={async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-                    e.preventDefault();
                     await handleValueChanged(e.target.value, e.target.selectionStart ?? e.target.value.length);
                 }}
-                onFocus={handleInputFocus}
                 onBlur={handleInputBlur}
+                onFocus={handleInputFocus}
                 disabled={!!errorMessage && !isDestinationFound}
                 aria-placeholder={placeholder}
                 aria-label={configuration.ariaLabel}
                 aria-expanded={isDroppedDown}
             />
-            {isDroppedDown &&
-                <TextNodeSearchInputDropdown
-                    options={options.map((o: CaretTextQueryNode): CaretTextQuery => o)}
-                    activeLiElementIndex={activeLiElementIndex}
-                    handleChoice={handleChoice}
-                    isLoading={isSettingOptions}/>
+            {isDroppedDown && <TextNodeSearchInputDropdown
+                options={options.map((n: CaretTextQueryNode): CaretTextQuery => n)}
+                activeLiElementIndex={keyboardNavigation.optionsIndex}
+                handleChoice={goToNode}
+                isLoading={isSettingOptions}/>
             }
         </div>
     );

@@ -8,16 +8,16 @@ import {TextNodeTreeService} from "../core/text-node-search/TextNodeTreeService"
 import {mapNodeToReqDto} from "./map-node-to-req-dto";
 import {mapResDtoToNode} from "./map-res-dto-to-node";
 
-export function createTextNodeTreeService(apiClient: AutocompleteAddressApiClient): TextNodeTreeService<Address> {
-    async function getNodesByCaretText(value: string, caretIndexInValue: number): Promise<Result<ResultingCaretTextQueryNode<Address>[], Error>> {
+export function createAddressTextNodeTreeService(apiClient: AutocompleteAddressApiClient): TextNodeTreeService<Address> {
+    async function getNodesByCaretText(value: string, caretIndexInValue: number, abortController?: AbortController): Promise<Result<ResultingCaretTextQueryNode<Address>[]>> {
         const reqDto: AutocompleteAddressRequestDto = {value: value, caretIndexInValue: caretIndexInValue};
-        const resDtosResult: Result<AutocompleteAddressResponseDto[], Error> = await apiClient.readAutocompleteAddresses(reqDto);
+        const resDtosResult: Result<AutocompleteAddressResponseDto[]> = await apiClient.readAutocompleteAddresses(reqDto, abortController);
         return _mapResDtosToNodes(resDtosResult);
     }
 
-    async function getNodesByNode(node: ResultingCaretTextQueryNode<Address>): Promise<Result<ResultingCaretTextQueryNode<Address>[], Error>> {
+    async function getNodesByNode(node: ResultingCaretTextQueryNode<Address>): Promise<Result<ResultingCaretTextQueryNode<Address>[]>> {
         const reqDto: AutocompleteAddressRequestDto = mapNodeToReqDto(node);
-        const resDtosResult: Result<AutocompleteAddressResponseDto[], Error> = await apiClient.readAutocompleteAddresses(reqDto);
+        const resDtosResult: Result<AutocompleteAddressResponseDto[]> = await apiClient.readAutocompleteAddresses(reqDto);
         return _mapResDtosToNodes(resDtosResult);
     }
 
@@ -26,7 +26,7 @@ export function createTextNodeTreeService(apiClient: AutocompleteAddressApiClien
         getNodesByNode
     }
 
-    function _mapResDtosToNodes(resDtosResult: Result<AutocompleteAddressResponseDto[], Error>): Result<ResultingCaretTextQueryNode<Address>[], Error> {
+    function _mapResDtosToNodes(resDtosResult: Result<AutocompleteAddressResponseDto[]>): Result<ResultingCaretTextQueryNode<Address>[]> {
         return mapSuccess(resDtosResult, (s: AutocompleteAddressResponseDto[]): ResultingCaretTextQueryNode<Address>[] =>
             s.map((dto: AutocompleteAddressResponseDto): ResultingCaretTextQueryNode<Address> => mapResDtoToNode(dto, getNodesByNode))
         );
