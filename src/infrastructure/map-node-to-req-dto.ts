@@ -1,7 +1,7 @@
 import {Address} from "../core/address/Address";
-import {AutocompleteAddressRequestDto} from "./dataforsyningen/AutocompleteAddressRequestDto";
+import {AutocompleteAddressRequestDto} from "./dawa/AutocompleteAddressRequestDto";
 import {AddressType} from "../core/address/AddressType";
-import {AutocompleteAddressEntityTypeDto} from "./dataforsyningen/AutocompleteAddressResponseDto";
+import {AutocompleteAddressEntityTypeDto} from "./dawa/AutocompleteAddressResponseDto";
 import {ResultingCaretTextQueryNode} from "../core/text-node-search/types";
 
 export function mapNodeToReqDto(node: ResultingCaretTextQueryNode<Address>): AutocompleteAddressRequestDto {

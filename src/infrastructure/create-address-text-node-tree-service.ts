@@ -1,6 +1,6 @@
 import {AutocompleteAddressApiClient} from "./AutocompleteAddressApiClient";
-import {AutocompleteAddressRequestDto} from "./dataforsyningen/AutocompleteAddressRequestDto";
-import {AutocompleteAddressResponseDto} from "./dataforsyningen/AutocompleteAddressResponseDto";
+import {AutocompleteAddressRequestDto} from "./dawa/AutocompleteAddressRequestDto";
+import {AutocompleteAddressResponseDto} from "./dawa/AutocompleteAddressResponseDto";
 import {mapSuccess, Result} from "../shared/Result";
 import {ResultingCaretTextQueryNode} from "../core/text-node-search/types";
 import {Address} from "../core/address/Address";

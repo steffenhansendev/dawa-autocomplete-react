@@ -1,7 +1,7 @@
 import {
     AutocompleteAddressEntityTypeDto,
     AutocompleteAddressResponseDto
-} from "./dataforsyningen/AutocompleteAddressResponseDto";
+} from "./dawa/AutocompleteAddressResponseDto";
 import {ResultingCaretTextQueryNode} from "../core/text-node-search/types";
 import {Address} from "../core/address/Address";
 import {CaretText} from "../core/text-node-search/CaretText";

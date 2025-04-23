@@ -1,5 +1,5 @@
-import {AutocompleteAddressResponseDto} from "./dataforsyningen/AutocompleteAddressResponseDto";
-import {AutocompleteAddressRequestDto} from "./dataforsyningen/AutocompleteAddressRequestDto";
+import {AutocompleteAddressResponseDto} from "./dawa/AutocompleteAddressResponseDto";
+import {AutocompleteAddressRequestDto} from "./dawa/AutocompleteAddressRequestDto";
 
 import {Result} from "../shared/Result";
 

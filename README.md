@@ -18,15 +18,16 @@ plug-and-play React Element implementing the following:
 We will provide minimal styling available for consumption by installing Bootstrap and delegate styling to consumers
 otherwise.
 
-- We will strive towards no dependencies other than React, React DOM, and optionally Bootstrap,
-- user agnosticism towards whether an address is of type entrance or of type address (see below),
+We will require no other dependencies than React, React DOM, and optionally Bootstrap.
+
+- We will strive towards user agnosticism towards whether an address is of type entrance or of type address (see below),
 - complying with accessibility standards,
 - supporting mobile no less than desktop devices,
 - high convenience for consumers,
 - high configurability for consumers,
 - high maintainability and flexibility in the source,
 - low coupling and high cohesion in the source,
-- and we will acknowledge being an alternative to [dawa-autocomplete2](https://github.com/SDFIdk/dawa-autocomplete2)
+- and we will acknowledge being an alternative to [dawa-autocomplete2](https://github.com/SDFIdk/dawa-autocomplete2).
 
 ### Terminology
 

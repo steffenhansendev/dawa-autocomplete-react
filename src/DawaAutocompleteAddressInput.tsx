@@ -1,7 +1,7 @@
 import React, {ReactElement, useMemo} from "react";
 import {
     createAutocompleteAddressApiClient
-} from "./infrastructure/dataforsyningen/create-autocomplete-address-api-client";
+} from "./infrastructure/dawa/create-autocomplete-address-api-client";
 import {configuration, configure} from "./configuration/configure";
 import {createAddressTextNodeTreeService} from "./infrastructure/create-address-text-node-tree-service";
 import {Address} from "./core/address/Address";
