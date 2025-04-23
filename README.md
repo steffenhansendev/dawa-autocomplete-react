@@ -26,7 +26,7 @@ We will require no other dependencies than React, React DOM, and optionally Boot
 - high convenience for consumers,
 - high configurability for consumers,
 - high maintainability and flexibility in the source,
-- low coupling and high cohesion in the source,
+- low coupling and high cohesion in the source.
 
 We will acknowledge being an alternative to [dawa-autocomplete2](https://github.com/SDFIdk/dawa-autocomplete2).
 
