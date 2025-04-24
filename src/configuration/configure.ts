@@ -8,6 +8,8 @@ export function configure(override: DeepPartial<Configuration> | undefined): voi
     configuration = {
         placeholder: override?.placeholder ?? configFile.placeholder,
         isAutoFocus: override?.isAutoFocus ?? configFile.isAutofocus,
+        zipCodesSelection: override?.zipCodesSelection ?? configFile.zipCodesSelection,
+        municipalityCodesSelection: override?.municipalityCodesSelection ?? configFile.municipalityCodesSelection,
         errorMessageOnApiClientFailure: override?.errorMessageOnApiClientFailure ?? configFile.errorMessageOnApiClientFailure,
         loadingMessageOnApiClientRequest: override?.loadingMessageOnApiClientRequest ?? configFile.loadingMessageOnApiClientRequest,
         apiRequestTypingDebounceMilliseconds: configFile.apiRequestTypingDebounceMilliseconds,

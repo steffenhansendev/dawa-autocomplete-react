@@ -1,6 +1,8 @@
 export interface Configuration {
     readonly placeholder: string;
     readonly isAutoFocus: boolean;
+    readonly zipCodesSelection: string[];
+    readonly municipalityCodesSelection: string[];
     readonly errorMessageOnApiClientFailure: string;
     readonly loadingMessageOnApiClientRequest: string;
     readonly apiRequestLoadingIndicatorDebounceMilliseconds: number;

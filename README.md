@@ -98,6 +98,7 @@ npm install bootstrap
 ```ts
 import 'bootstrap/dist/css/bootstrap.css';
 ```
+
 ### Apply custom styling
 
 The CSS classes (see below) applied can also be selected for custom styling (in combination with Bootstrap).
@@ -107,17 +108,19 @@ That is, installing Bootstrap is entirely optional.
 
 The following is provided from dawa-autocomplete-react.config.json.
 
-| Property                                         | Type      | Static                                                 | Description                                                                                      |
-|--------------------------------------------------|-----------|--------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| `placeholder`                                    | `string`  | `"Enter Danish address ..."`                           | Displayed in the input when empty                                                                |
-| `isAutoFocus`                                    | `boolean` | `false`                                                | Whether the input is rendered in focus                                                           |
-| `errorMessageOnApiClientFailure`                 | `string`  | `"Integration with external address registry failed."` | Displayed in the disabled input when API requests fail                                           |
-| `loadingMessageOnApiClientRequest`               | `string`  | `"Loading"`                                            | Displayed as a single dropdown option while awaiting API response. Suffixed with animated " ..." |
-| `apiRequestLoadingIndicatorDebounceMilliseconds` | `number`  | `150`                                                  | Delay (ms) before showing loading message while awaiting API response                            |
-| `apiRequestTypingDebounceMilliseconds`           | `number`  | `150`                                                  | Delay (ms) before dispatching API requests triggered by typing input                             |
-| `autocompleteAddressApiClient`                   | `object`  | —                                                      | API client configuration                                                                         |
-| `styling`                                        | `object`  | —                                                      | Class names for styling the HTML elements                                                        |
-| `ariaLabel`                                      | `string`  | `"Search input"`                                       | Accessibility label for the `<input`> element                                                    |
+| Property                                         | Type       | Static                                                 | Description                                                                                      |
+|--------------------------------------------------|------------|--------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| `placeholder`                                    | `string`   | `"Enter Danish address ..."`                           | Displayed in the input when empty                                                                |
+| `isAutoFocus`                                    | `boolean`  | `false`                                                | Whether the input is rendered in focus                                                           |
+| `zipCodesSelection`                              | `string[]` | `[]`                                                   | Includes only options and results with these zip codes                                           
+| `municipalityCodesSelection`                     | `string[]` | `[]`                                                   | Includes only options and results with these municipality codes                                  |
+| `errorMessageOnApiClientFailure`                 | `string`   | `"Integration with external address registry failed."` | Displayed in the disabled input when API requests fail                                           |
+| `loadingMessageOnApiClientRequest`               | `string`   | `"Loading"`                                            | Displayed as a single dropdown option while awaiting API response. Suffixed with animated " ..." |
+| `apiRequestLoadingIndicatorDebounceMilliseconds` | `number`   | `150`                                                  | Delay (ms) before showing loading message while awaiting API response                            |
+| `apiRequestTypingDebounceMilliseconds`           | `number`   | `150`                                                  | Delay (ms) before dispatching API requests triggered by typing input                             |
+| `autocompleteAddressApiClient`                   | `object`   | —                                                      | API client configuration                                                                         |
+| `styling`                                        | `object`   | —                                                      | Class names for styling the HTML elements                                                        |
+| `ariaLabel`                                      | `string`   | `"Search input"`                                       | Accessibility label for the `<input`> element                                                    |
 
 ---
 
@@ -156,15 +159,16 @@ Consumers may opt in overrides for each property selectively via the `configurat
 `DawaAutoCompleteAddressInput`. For `styling`, only the Bootstrap classes are overridden.
 
 For instance, a danish translation may look as such:
+
 ```tsx
-<DawaAutocompleteAddressInput 
-        configurationOverride={{
-            placeholder: "Søg efter dansk adresse ...",
-            loadingMessageOnApiClientRequest: "Søger",
-            errorMessageOnApiClientFailure: "Integrationsfejl opstod.",
-            ariaLabel: "Søgefelt",
-        }}
-        addressObserver={(a) => {}}
+<DawaAutocompleteAddressInput
+    configurationOverride={{
+        placeholder: "Søg efter dansk adresse ...",
+        loadingMessageOnApiClientRequest: "Søger",
+        errorMessageOnApiClientFailure: "Integrationsfejl opstod.",
+        ariaLabel: "Søgefelt",
+    }}
+    addressObserver={(a) => {}}
 />
 ```
 

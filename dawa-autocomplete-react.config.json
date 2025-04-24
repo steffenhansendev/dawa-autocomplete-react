@@ -7,6 +7,8 @@
   "apiRequestTypingDebounceMilliseconds": 150,
   "autocompleteAddressApiHost": "https://api.dataforsyningen.dk",
   "autocompleteAddressApiUri": "autocomplete",
+  "zipCodesSelection": [],
+  "municipalityCodesSelection": [],
   "autocompleteAddressApiMaxResultCount": 15,
   "divElementClassNames": [
     "autocomplete-input-container"
