@@ -5,11 +5,12 @@ import {mapSuccess, Result} from "../shared/Result";
 import {ResultingCaretTextQueryNode} from "../core/text-node-search/types";
 import {Address} from "../core/address/Address";
 import {TextNodeTreeService} from "../core/text-node-search/TextNodeTreeService";
-import {mapResDtoToNode} from "./map-res-dto-to-node";
 import {createToReqDtoMapper, ToReqDtoMapper} from "./create-to-req-dto-mapper";
+import {createFromResDtoMapper, FromResDtoMapper} from "./map-res-dto-to-node";
 
 export function createAddressTextNodeTreeService(apiClient: AutocompleteAddressApiClient): TextNodeTreeService<Address> {
     const _toReqDtoMapper: ToReqDtoMapper = createToReqDtoMapper();
+    const _fromResDtoMapper: FromResDtoMapper = createFromResDtoMapper();
 
     async function getNodesByCaretText(value: string, caretIndexInValue: number, abortController?: AbortController): Promise<Result<ResultingCaretTextQueryNode<Address>[]>> {
         const reqDto: AutocompleteAddressRequestDto = _toReqDtoMapper.mapCaretTextToReqDto(value, caretIndexInValue);
@@ -30,7 +31,7 @@ export function createAddressTextNodeTreeService(apiClient: AutocompleteAddressA
 
     function _mapResDtosToNodes(resDtosResult: Result<AutocompleteAddressResponseDto[]>): Result<ResultingCaretTextQueryNode<Address>[]> {
         return mapSuccess(resDtosResult, (s: AutocompleteAddressResponseDto[]): ResultingCaretTextQueryNode<Address>[] =>
-            s.map((dto: AutocompleteAddressResponseDto): ResultingCaretTextQueryNode<Address> => mapResDtoToNode(dto, getNodesByNode))
+            s.map((dto: AutocompleteAddressResponseDto): ResultingCaretTextQueryNode<Address> => _fromResDtoMapper.mapResDtoToNode(dto, getNodesByNode))
         );
     }
 }

@@ -11,59 +11,72 @@ import {createResultingCaretTextQueryNode} from "../core/text-node-search/create
 import {createAddress} from "../core/address/create-address";
 import {AddressType} from "../core/address/AddressType";
 
-export function mapResDtoToNode(
-    resDto: AutocompleteAddressResponseDto,
-    getNodesByNode: (node: ResultingCaretTextQueryNode<Address>) => Promise<Result<ResultingCaretTextQueryNode<Address>[]>>
-): ResultingCaretTextQueryNode<Address> {
-    const isLeaf: boolean = resDto.type === "adresse";
-    const isRoot: boolean = resDto.type === "vejnavn";
-    const address: Address | null = mapResDtoToAddress(resDto);
-    const query: CaretText = createCaretText(resDto.tekst, resDto.caretpos);
-    const presentable: CaretText = createCaretText(resDto.forslagstekst);
-    return createResultingCaretTextQueryNode(isRoot, isLeaf, getNodesByNode, query, presentable, address);
+export interface FromResDtoMapper {
+    mapResDtoToNode(
+        resDto: AutocompleteAddressResponseDto,
+        getNodesByNode: (node: ResultingCaretTextQueryNode<Address>) => Promise<Result<ResultingCaretTextQueryNode<Address>[]>>
+    ): ResultingCaretTextQueryNode<Address>;
 }
 
-function mapResDtoToAddress(dto: AutocompleteAddressResponseDto): Address | null {
-    if (!isAddress(dto)) {
-        return null;
+export function createFromResDtoMapper(): FromResDtoMapper {
+    function mapResDtoToNode(
+        resDto: AutocompleteAddressResponseDto,
+        getNodesByNode: (node: ResultingCaretTextQueryNode<Address>) => Promise<Result<ResultingCaretTextQueryNode<Address>[]>>
+    ): ResultingCaretTextQueryNode<Address> {
+        const isLeaf: boolean = resDto.type === "adresse";
+        const isRoot: boolean = resDto.type === "vejnavn";
+        const address: Address | null = _mapResDtoToAddress(resDto);
+        const query: CaretText = createCaretText(resDto.tekst, resDto.caretpos);
+        const presentable: CaretText = createCaretText(resDto.forslagstekst);
+        return createResultingCaretTextQueryNode(isRoot, isLeaf, getNodesByNode, query, presentable, address);
     }
-    return createAddress(
-        dto.data.id!,
-        mapToAddressType(dto.type),
-        dto.data.vejnavn!,
-        dto.data.husnr!,
-        dto.data.postnr!,
-        dto.data.postnrnavn!,
-        dto.data.etage,
-        dto.data.dør,
-        dto.data.vejkode,
-        dto.data.adresseringsvejnavn,
-        dto.data.supplerendebynavn,
-        dto.data.kommunekode,
-        dto.data.status,
-        dto.data.darstatus,
-        dto.data.adgangsadresseid,
-        dto.data.y,
-        dto.data.x,
-        dto.data.href
-    );
-}
 
-function isAddress(dto: AutocompleteAddressResponseDto): boolean {
-    return !!dto.data.id &&
-        !!dto.type &&
-        dto.type !== "vejnavn" &&
-        !!dto.data.vejnavn &&
-        !!dto.data.husnr &&
-        !!dto.data.postnr &&
-        !!dto.data.postnrnavn;
-}
+    return {
+        mapResDtoToNode
+    }
 
-function mapToAddressType(typeDto: AutocompleteAddressEntityTypeDto): AddressType {
-    switch (typeDto) {
-        case "adgangsadresse":
-            return AddressType.Entrance;
-        case "adresse":
-            return AddressType.Address;
+    function _mapResDtoToAddress(dto: AutocompleteAddressResponseDto): Address | null {
+        if (!_isAddress(dto)) {
+            return null;
+        }
+        return createAddress(
+            dto.data.id!,
+            _mapToAddressType(dto.type),
+            dto.data.vejnavn!,
+            dto.data.husnr!,
+            dto.data.postnr!,
+            dto.data.postnrnavn!,
+            dto.data.etage,
+            dto.data.dør,
+            dto.data.vejkode,
+            dto.data.adresseringsvejnavn,
+            dto.data.supplerendebynavn,
+            dto.data.kommunekode,
+            dto.data.status,
+            dto.data.darstatus,
+            dto.data.adgangsadresseid,
+            dto.data.y,
+            dto.data.x,
+            dto.data.href
+        );
+    }
+
+    function _isAddress(dto: AutocompleteAddressResponseDto): boolean {
+        return !!dto.data.id &&
+            !!dto.type &&
+            dto.type !== "vejnavn" &&
+            !!dto.data.vejnavn &&
+            !!dto.data.husnr &&
+            !!dto.data.postnr &&
+            !!dto.data.postnrnavn;
+    }
+
+    function _mapToAddressType(typeDto: AutocompleteAddressEntityTypeDto): AddressType {
+        switch (typeDto) {
+            case "adgangsadresse":
+                return AddressType.Entrance;
+            case "adresse":
+                return AddressType.Address;
+        }
     }
 }
