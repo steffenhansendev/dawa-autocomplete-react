@@ -1,6 +1,6 @@
 {
   "name": "dawa-autocomplete-react",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "React first TSX component and API client for Danmarks Adresse Web API (DAWA) autocomplete.",
   "main": "out/src/index.js",
   "module": "out/src/index.js",
