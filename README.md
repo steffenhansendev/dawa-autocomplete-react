@@ -108,7 +108,7 @@ That is, installing Bootstrap is entirely optional.
 
 The following is provided from dawa-autocomplete-react.config.json.
 
-| Property                                         | Type       | Static                                                 | Description                                                                                      |
+| Property                                         | Type       | Default                                                | Description                                                                                      |
 |--------------------------------------------------|------------|--------------------------------------------------------|--------------------------------------------------------------------------------------------------|
 | `placeholder`                                    | `string`   | `"Enter Danish address ..."`                           | Displayed in the input when empty                                                                |
 | `isAutoFocus`                                    | `boolean`  | `false`                                                | Whether the input is rendered in focus                                                           |
@@ -126,7 +126,7 @@ The following is provided from dawa-autocomplete-react.config.json.
 
 ### `autocompleteAddressApiClient`
 
-| Property         | Type     | Static                             | Description                                 |
+| Property         | Type     | Default                            | Description                                 |
 |------------------|----------|------------------------------------|---------------------------------------------|
 | `host`           | `string` | `"https://api.dataforsyningen.dk"` | API host URL                                |
 | `uri`            | `string` | `"autocomplete"`                   | API endpoint path                           |
